@@ -22,3 +22,7 @@ A high-performance URL shortening service leveraging the Bun ecosystem and Mongo
     Mongoose Integration: Structured data modeling for URLs, click analytics, and user accounts.
 
     Optimized Performance: Minimal overhead by utilizing Bun's built-in HTTP server and cryptographic primitives.
+
+📖 API Specification
+
+You can view the api specification 👉 **[View API Specifications](./docs)**
