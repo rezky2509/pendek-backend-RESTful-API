@@ -1,0 +1,16 @@
+# Use the official bun image 
+FROM oven/bun:latest
+
+WORKDIR /app
+
+# Copy the bundled file (distribution file (single file ))
+# something wrong here.
+# COPY /src/package.json
+
+USER bun
+# use the default 3000 port 
+EXPOSE 3000
+
+# the run bundle ()
+ENTRYPOINT [ "bun","run","index.js" ]
+

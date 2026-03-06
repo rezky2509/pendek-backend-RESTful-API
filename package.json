@@ -1,0 +1,22 @@
+{
+  "name": "bun-hono-restful",
+  "scripts": {
+    "dev": "bun run --hot src/index.ts",
+    "migration": "bun run ./src/database/migration.ts"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "figlet": "^1.10.0",
+    "hono": "^4.12.1",
+    "hono-rate-limiter": "^0.5.3",
+    "mongodb": "^6.21.0",
+    "mongoose": "^8.23.0",
+    "ts-migrate-mongoose": "^4.2.0",
+    "winston": "^3.19.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/figlet": "^1.7.0"
+  }
+}
