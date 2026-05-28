@@ -4,13 +4,13 @@
 export type RegisterUserRequest = {
     username: string;
     password: string;
-    name:string,
+    email:string,
     token?:string | undefined | null
 }
 
 export type UserResponse = {
     username: string;
-    name: string;
+    email: string;
     // token is optional 
     // because not all response to user need
     // token. only during registration 
@@ -26,6 +26,6 @@ export type LoginUserRequest = {
 // name can be change and password
 // so both name or password can be undefined or empty
 export type UpdateUserRequest = {
-    name?: string,
+    email: string,
     password?: string
 }

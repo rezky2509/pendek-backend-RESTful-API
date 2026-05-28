@@ -8,7 +8,7 @@ export interface User {
     _id: ObjectId,
     username: string,
     password: string,
-    name: string,
+    email: string,
     token?: string
 }
 
@@ -28,7 +28,7 @@ const UserSchema: Schema = new mongoose.Schema({
     password:{
         type:String,
     },
-    name:{
+    email:{
         type:String,
     },
     token:{
@@ -43,7 +43,7 @@ const UserSchema: Schema = new mongoose.Schema({
 // Create return function as an object type userResponse
 export function toUserResponse(user:RegisterUserRequest) :UserResponse {
     return {
-        name: user.name,
+        email: user.email,
         username: user.username,
         token: user.token!
     }

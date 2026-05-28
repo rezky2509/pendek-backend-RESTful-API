@@ -8,7 +8,7 @@ export interface UrlMapper {
     long_url: string, 
     short_url: string,
     description?: string | undefined, 
-    total_click: number,
+    total_clicks: number,
     created_at: string, 
     is_active: boolean
 }
@@ -29,7 +29,7 @@ const UrlMapperSchema: Schema = new mongoose.Schema({
     description : {
         type: String
     },
-    total_click: {
+    total_clicks: {
         type: Number
     },
     // converted to iso STRING format 

@@ -15,7 +15,6 @@ export const authMidleware: MiddlewareHandler = async (c,next) =>{
     // where this user key can be reuse and hold the entire data of the
     // current user. 
     c.set('user', user)
-    console.log(user)
     // The next means, go to the next code. 
     await next()
 }

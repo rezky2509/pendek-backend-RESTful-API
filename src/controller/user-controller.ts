@@ -23,12 +23,14 @@ userController.post('users', async(c)=>{
     // store the request as json with type of RegisterUserRequest Type
     // With type assertion, we tell TypeScript that request is a RegisterUserRequest 
     const request = await c.req.json() as RegisterUserRequest
+    console.log('Checking body')
     console.log(request)
     // const request = await c.req.json() as RegisterUserRequest //<--- something wrong here 
     // // Send to Service File
     const response = await userService.register(request)
     // // send back to client 
     // return as succesful API response of 201 created. 
+    c.header('Access-Control-Allow-Origin','*')
     return c.json({
         data: response
     },201)
@@ -71,7 +73,7 @@ userController.use(authMidleware)
 
 // These method specify which route or endpoint that need to have the 
 // token verified
-userController.get('users/current', limiter ,async (c)=>{
+userController.get('users/current',async (c)=>{
     // take user
     // const userToken = c.req.header('Authorization')?.substring(7)
     // const validateToken = await userService.get(userToken)
@@ -81,7 +83,6 @@ userController.get('users/current', limiter ,async (c)=>{
     // The c now return as a key and valu pair 
     // so this we dont need to call the userservice file
     const user = c.get('user') as User
-    console.log(user)
 
     return c.json({
         // here the toUserResponse will fill in automatically 

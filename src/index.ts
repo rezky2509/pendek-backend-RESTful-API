@@ -2,6 +2,7 @@
 // bun run dev
 // Hono is kinda similar to express with node.js
 import { Hono } from 'hono'
+import {cors} from 'hono/cors'
 // import { poweredBy } from 'hono/powered-by'
 // Logging for any request 
 // import { logger } from 'hono/logger'
@@ -23,6 +24,7 @@ import { contactController } from './controller/contact-controller'
 import { addressController } from './controller/address-controller'
 import { urlMapperController } from './controller/urlMapper-controller'
 import { reDirectURLController } from './controller/reDirect-controller'
+import { apiTestConnectionController } from './controller/apiTestConnection'
 
 const app = new Hono()
 // Middleware
@@ -36,6 +38,21 @@ try {
   console.log(`${error}`)
 }
 
+// Cors 
+// Change the origin later in staging or production
+app.use('/api/*', cors())
+app.use(
+  '/api/*',
+  cors({
+    origin: '*',
+    allowHeaders: ['X-Custom-Header', 'Upgrade-Insecure-Requests'],
+    allowMethods: ['POST', 'GET', 'OPTIONS','PATCH','UPDATE'],
+    exposeHeaders: ['Content-Length', 'X-Kuma-Revision'],
+    maxAge: 600,
+    credentials: true,
+  })
+)
+
 
 app.use(logger())
 
@@ -44,6 +61,8 @@ app.use(logger())
 app.route('api/',userController)
 // URL_Mapper Controller 
 app.route('api/',urlMapperController)
+// Api Connection Controller 
+// app. route('api-test',apiTestConnectionController)
 // Re-direct controller
 app.route('/',reDirectURLController)
 
@@ -60,12 +79,12 @@ app.onError(async(error,c)=>{
       // using below, the custom message not thrown from service. 
       // return c.json({errors: error.cause})
       // using below, the custom message thrown from service. 
-      return c.json({errors: error.cause})
+      return c.json({errors: error.message})
     }
     else if(error instanceof ZodError){
       c.status(400)
       console.log("this code run")
-      return c.json({errors: error.cause})
+      return c.json({errors: error.message})
     }
     else {
       c.status(500)

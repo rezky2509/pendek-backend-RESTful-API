@@ -93,6 +93,7 @@ export class userService{
             console.log('User not exist, proceed create')
             // Hashing Password Bcrypt
             // https://bun.com/guides/util/hash-a-password
+            // Need to instyal 
             const bcrypt = await Bun.password.hash(request.password, {
                 algorithm: "bcrypt",
                 // cost is the complexity
@@ -208,6 +209,7 @@ export class userService{
         const validateToken = UserValidation.TOKEN.safeParse(token)
         console.log('-------- Check Token Validity------')
         if(validateToken.error){
+            console.info('Token is empty')
             throw new HTTPException(401,{
                 cause:"Unauthorized Access (1)"
             })
@@ -230,11 +232,10 @@ export class userService{
         // const user = await UserModel.find({token: validateToken}).select({'name':1 ,'username':1, "_id":0})
         // find return an array, find one return an object
         const user = await UserModel.findOne({token: validateToken.data})
-        console.log("Respond DB ")
-        console.log(user)
 
         // If token value match with request
         if(!user){
+            console.info('Token is invalid')
             throw new HTTPException(401,{
                 cause:"Unauthorized Access (2)"
             })
@@ -252,7 +253,7 @@ export class userService{
     // second argument is the request from the client side
     static async update(user: User, request: UpdateUserRequest): Promise<UserResponse>{
         console.log('----------- checking user request ------------------')
-        if(request.name === undefined && request.password === undefined){
+        if(request.email === undefined && request.password === undefined){
             throw new HTTPException(400,{
                 message:"Nothing to update"
             })
@@ -267,8 +268,8 @@ export class userService{
 
         // check if the request body contain name 
         // or password
-        if(request.name){
-            user.name = request.name
+        if(request.email){
+            user.email = request.email
         }else if(request.password){
             user.password = await Bun.password.hash(request.password,{
                 algorithm: "bcrypt",
@@ -281,7 +282,7 @@ export class userService{
         // Model.findOneAndUpdate(filter(where condition), update, options, [callback]);
         // The options is return the new and updated document.
         // by default this set to false
-        user = await UserModel.findOneAndUpdate({username:user.username},{$set:{name:user.name,password:user.password}},{new:true}) as User
+        user = await UserModel.findOneAndUpdate({username:user.username},{$set:{email:user.email,password:user.password}},{new:true}) as User
         // By Default (without { new: true } or with { new: false }):
         // When you call findOneAndUpdate() without specifying the new option (or setting new: false explicitly),
         //  Mongoose will return the document as it existed before the update was applied.

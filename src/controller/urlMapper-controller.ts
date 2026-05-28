@@ -5,8 +5,13 @@ import { CreateURLRequest, UpdateUrl } from "./models/urlMapper-model"
 import { UrlMapperService } from "../service/UrlMapperService"
 import { HTTPException } from "hono/http-exception"
 import { error } from "winston"
+import { authMidleware } from "../middleware/auth-middleware"
 
 export const urlMapperController = new Hono<{Variables: ApplicationVariables}>
+// Need to use auth
+// These enable to fetch the current user
+urlMapperController.use(authMidleware)
+
 
 urlMapperController.post('/url_mapper', async(c)=>{
     // Middleware
@@ -18,11 +23,13 @@ urlMapperController.post('/url_mapper', async(c)=>{
 
     return c.json({
         data: response
-    })
+    },201)
 })
 
 urlMapperController.get('/url_mapper/lists', async(c)=>{
     const user = c.get('user') as User 
+    console.log('User Details')
+    console.log(user)
     const responseDb = await UrlMapperService.getListofURL(user)
     return c.json({
         data: responseDb
@@ -62,6 +69,16 @@ urlMapperController.patch('/url_mapper/update/:url_id', async(c)=>{
         data: databaseResponse
     })
 
+})
+
+urlMapperController.get("/url_mapper/dashboard/overview", async(c)=>{
+    // Get the middleware 
+    const user = await c.get('user') as User
+    const resultDb = await UrlMapperService.dashboardOverview(user)
+
+    return c.json({
+        data: resultDb
+    })
 })
 
 // urlMapperController.get(':shortURL',async(c)=>{

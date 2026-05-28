@@ -9,7 +9,6 @@ Request Headers:
 Request body: 
 ```json 
 {
-    "user": "21412",
     "long_url": "www.bfddbf.com/412412",
     "description": "here is the description",
     "is_active": true
@@ -25,7 +24,7 @@ Response body(success):
         "user": "21412",
         "long_url": "www.bfddbf.com/412412",
         "short_url":"wwww.pendek.com/g342g2",
-        "total_clicks":23231,
+        "total_clicks":0,
         "created_at": "12 Jan 2025",
         "description": "here is the description",
         "is_active": true
@@ -161,4 +160,30 @@ Response Error(Not Found):
 }
 ```
 
+
+## API Data For Dashboard User
+Endpoint: GET /url_mapper/dashboard/overview
+
+Request Headers: 
+Authorization: token
+
+Content-type:
+application/json
+
+*note: recently added can be return as an array of object
+
+Response Body:
+```json
+{
+    "total-clicks":22,
+    "total-active-links":22,
+    "most-clicks-links":22,
+    "recently-added-links":{
+        "shorten-url":"xxxx",
+        "original-url":"xxx",
+        "total-clicks":22,
+        "url-status":22
+    }
+}
+```
 

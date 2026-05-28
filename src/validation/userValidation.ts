@@ -5,7 +5,7 @@ export class UserValidation {
     static readonly REGISTER:ZodType = z.object({
         username: z.string().min(3,{message:'Username is required and minimum of 3 character'}).max(100),
         password: z.string().min(3,{message:'Password is required and minimum of 3 character'}).max(100),
-        name: z.string().min(3,{message:'Name is required and minimum of 3 character'}).max(100),
+        email: z.string().min(3,{message:'Email is required and minimum of 3 character'}).max(100),
     })
 
     // Check the request body
