@@ -7,6 +7,8 @@ A high-performance URL shortening service leveraging the Bun ecosystem and Mongo
 
     Database: MongoDB (NoSQL)
 
+    Hono: Lightweight Web application Framework
+
     ORM: Mongoose
 
     Auth: Token-Based Authentication (JWT/Secure Headers)
