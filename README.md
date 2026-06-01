@@ -1,32 +1,30 @@
-🔗 Pendek URL Shortener
+# 🔗 Pendek URL Shortener
 
 A high-performance URL shortening service leveraging the Bun ecosystem and MongoDB. This project focuses on native speed, secure token-based access, and efficient identifier generation.
-🛠️ Tech Stack
 
-    Runtime: Bun (Fast all-in-one JavaScript runtime)
+## 🛠️ Tech Stack
 
-    Database: MongoDB (NoSQL)
+* **Runtime:** Bun (Fast all-in-one JavaScript & TypeScript runtime)
+* **Process Manager:** BPM2 (Process manager designed specifically for the Bun runtime)
+* **Framework:** Hono (Lightweight, web standards-based application framework)
+* **Database:** MongoDB (NoSQL Object Data Modeling)
+* **ORM:** Mongoose
+* **Auth:** Token-Based Authentication (JWT / HTTP-only Secure Cookies)
+* **Hasher:** Bun.CryptoHasher (Native utility for highly randomized URL identifier generation)
 
-    Hono: Lightweight Web application Framework
+## 🔑 Key Features
 
-    ORM: Mongoose
+* **Native Bun Hashing:** Utilizes Bun's built-in cryptographic hasher (`SHA256`) to extract randomized, high-entropy 5-character slugs from full hashes, ensuring minimal collision rates without external packages.
+* **Production-Grade Process Management:** Powered by BPM2 to manage application state, handle automated crashes/restarts, and ensure the server remains immortal during deployment.
+* **Secure API:** Implements Next.js middleware-compatible token flows and schema validation via Zod to safeguard creation and user dashboard routes.
+* **Mongoose Integration:** Structured modeling for users, links, and quick-read analytics mapping (e.g., total click tracking).
 
-    Auth: Token-Based Authentication (JWT/Secure Headers)
+## 🚀 Deployment & Process Management
 
-    Hasher: Bun built-in hasher (Native utility for random URL generation)
+This application uses **BPM2** to manage background execution on production servers.
 
-🔑 Key Features
+## 📖 API Specification
 
-    Native Bun Hashing: Uses Bun crypto hasher to generate high-entropy, collision-resistant URL slugs without external dependencies.
+The detailed endpoints for authentication, link creation, and analytics tracking are fully documented. 
 
-    Secure API: Full token-based authentication flow to protect link creation and management.
-
-    Mongoose Integration: Structured data modeling for URLs, click analytics, and user accounts.
-
-    Optimized Performance: Minimal overhead by utilizing Bun's built-in HTTP server and cryptographic primitives.
-
-📖 API Specification
-
-You can view the api specification 👉 **[View API Specifications](./docs)**
-
-
+👉 *docs/*
