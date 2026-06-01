@@ -10,7 +10,6 @@ import {ENV} from '../utils/env'
 import { toAddressResponse } from "../controller/models/address-model";
 
 
-
 export class UrlMapperService{
     // The response should be promise
     // The body field user on the body need to be revise. 
@@ -104,7 +103,7 @@ export class UrlMapperService{
         const result = await URL_MAPPER_MODEL.find({
             user_id: user._id
             // using the select ('') field name and minus sign to exclude the field 
-        }).select('-user_id').lean({_id: true})
+        }).select('-user_id').lean({_id: true}).sort('created_at')
 
         // using the select to filter only necessary field, type space
         // const result = await URL_MAPPER_MODEL.find().select('_id long_url')
@@ -156,7 +155,7 @@ export class UrlMapperService{
         // Return the hash as string. use digest using base64 encoding
         // const short_url = (hasher.digest("base64")).slice(Math.random(),Math.random())
         console.log('Base_URl')
-        const base_url_short = ENV.BASE_URL_SHORTEN_DEVELOPMENT
+        const base_url_short = ENV.BASE_URL_SHORTEN
         console.log(base_url_short)
         // Use hex encoding. 
         // generated 64 characters
@@ -227,6 +226,7 @@ export class UrlMapperService{
                 await URL_MAPPER_MODEL.updateOne({
                     total_clicks: previousCount+1
                 }).where('short_url',completeShortURL)
+                // publish and push to let there is someone clicking the link 
             return {success: true, shorten_url: returnURL}
         }
         else {

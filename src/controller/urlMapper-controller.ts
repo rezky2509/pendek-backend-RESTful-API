@@ -7,11 +7,11 @@ import { HTTPException } from "hono/http-exception"
 import { error } from "winston"
 import { authMidleware } from "../middleware/auth-middleware"
 
+
 export const urlMapperController = new Hono<{Variables: ApplicationVariables}>
 // Need to use auth
 // These enable to fetch the current user
 urlMapperController.use(authMidleware)
-
 
 urlMapperController.post('/url_mapper', async(c)=>{
     // Middleware

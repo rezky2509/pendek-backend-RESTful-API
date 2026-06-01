@@ -41,8 +41,8 @@ import mongoose, { mongo } from "mongoose";
 
 // Use the env utils that had been defined
 // access to specific variable named .ATLAS_URI
-// const DB_URI:string = ENV.ATLAS_URI
-const DB_URI:string = ENV.MONGODB_COMPASS_URI
+const DB_URI:string = ENV.ATLAS_URI
+// const DB_URI:string = ENV.MONGODB_COMPASS_URI
 
 // Defined the mongolcient for stable API versioning
 // This is using native mongoclient API

@@ -2,6 +2,8 @@ import { Hono } from "hono";
 import { UrlMapperService } from "../service/UrlMapperService";
 import { URL_VALIDITY_STATUS } from "./models/urlMapper-model";
 
+import type {Serve, ServerWebSocket} from 'bun'
+
 export const reDirectURLController = new Hono()
 
     reDirectURLController.get(':shortURL',async(c)=>{
@@ -14,8 +16,9 @@ export const reDirectURLController = new Hono()
         // This header configuration to disable cache
         // Set headers to completely kill browser caching for this request
         c.header('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-        // c.header('Pragma', 'no-cache');
+        c.header('Pragma', 'no-cache');
         // c.header('Expires', '0');
+        console.log('Sending')
 
         if(redirectURL.success === false && redirectURL.errorType === 'URL IS NOT ACTIVE') {
             const htmlNotFoundLink =`

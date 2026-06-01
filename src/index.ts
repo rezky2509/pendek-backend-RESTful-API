@@ -12,6 +12,8 @@ import dbConnect from "./database/dbConnection"
 // To log every activity
 import { logger } from 'hono/logger'
 
+import {websocket} from 'hono/bun'
+
 
 // just for fun 
 // import figlet = require('figlet')
@@ -25,6 +27,7 @@ import { addressController } from './controller/address-controller'
 import { urlMapperController } from './controller/urlMapper-controller'
 import { reDirectURLController } from './controller/reDirect-controller'
 import { apiTestConnectionController } from './controller/apiTestConnection'
+import { WebsocketTest } from './controller/websocketTest'
 
 const app = new Hono()
 // Middleware
@@ -66,6 +69,8 @@ app.route('api/',urlMapperController)
 // Re-direct controller
 app.route('/',reDirectURLController)
 
+app.route('api/',WebsocketTest)
+
 app.use(logger())
 
 // This endpoint definition. Should only be implement on controller. 
@@ -97,6 +102,7 @@ app.onError(async(error,c)=>{
 // export default app 
 export default {
   port: 3050,
-  fetch: app.fetch
-}
+  fetch: app.fetch,
+  websocket,
 // Default Port number is 3000
+}

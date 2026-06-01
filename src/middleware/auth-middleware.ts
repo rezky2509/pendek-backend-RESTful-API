@@ -5,6 +5,11 @@ import { userService } from "../service/userService";
 // auth midlleware, so verified user data will be hold here
 
 export const authMidleware: MiddlewareHandler = async (c,next) =>{
+    const url = c.req.url
+    // If the request is trying to hit the websocket, bypass this middleware entirely
+    if (url === 'http://localhost:3050/api/hono-ws') {
+        return await next();
+    }
     // Take the token 
     const token = c.req.header('Authorization')
     // Here validate the token 
