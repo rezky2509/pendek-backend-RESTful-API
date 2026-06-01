@@ -36,7 +36,7 @@ urlMapperController.get('/url_mapper/lists', async(c)=>{
     })
 })
 
-urlMapperController.patch('/url_mapper/update/:url_id', async(c)=>{
+urlMapperController.patch('/url_mapper/:url_id', async(c)=>{
     console.log('UPDATING')
     const user = c.get('user') as User
     // if the body is not exist or undefined 
@@ -64,10 +64,11 @@ urlMapperController.patch('/url_mapper/update/:url_id', async(c)=>{
     // }
     const body = await c.req.json()
     const params =  await c.req.param('url_id')
-    const databaseResponse = await UrlMapperService.updateURL(body,user,params)
-    return c.json({
-        data: databaseResponse
-    })
+    console.log(body)
+    // const databaseResponse = await UrlMapperService.updateURL(body,user,params)
+    // return c.json({
+    //     data: databaseResponse
+    // })
 
 })
 

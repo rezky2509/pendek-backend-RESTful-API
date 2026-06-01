@@ -84,7 +84,7 @@ app.onError(async(error,c)=>{
       // using below, the custom message not thrown from service. 
       // return c.json({errors: error.cause})
       // using below, the custom message thrown from service. 
-      return c.json({errors: error.message})
+      return c.json({errors: error.cause})
     }
     else if(error instanceof ZodError){
       c.status(400)

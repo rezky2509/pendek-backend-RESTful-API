@@ -12,6 +12,10 @@ import { toAddressResponse } from "../controller/models/address-model";
 
 export class UrlMapperService{
 
+    // Staging or Production
+    // static BASE_URL = ENV.BASE_URL_SHORTEN
+    static BASE_URL = ENV.BASE_URL_SHORTEN_DEVELOPMENT
+
     // REFACTOR
     // The response should be promise
     // The body field user on the body need to be revise. 
@@ -217,7 +221,7 @@ export class UrlMapperService{
     // URL Re-direct
     static async reDirect(shortenURL: string): Promise<URL_VALIDITY_STATUS> {
         // Need to change 
-        const completeShortURL = ENV.BASE_URL_SHORTEN_DEVELOPMENT + shortenURL
+        const completeShortURL = UrlMapperService.BASE_URL + shortenURL
         const fetchLongURL = await URL_MAPPER_MODEL.find().where('short_url',completeShortURL).lean()
         let returnURL: string = ''
         let previousCount: number = 0;
