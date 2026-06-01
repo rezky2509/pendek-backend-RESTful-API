@@ -11,6 +11,8 @@ import { toAddressResponse } from "../controller/models/address-model";
 
 
 export class UrlMapperService{
+
+    // REFACTOR
     // The response should be promise
     // The body field user on the body need to be revise. 
     static async create(user: User, request: CreateURLRequest): Promise<CreateUrlResponse>{
@@ -37,7 +39,7 @@ export class UrlMapperService{
         // Implement Google Vision API
 
 
-
+        // This one ok
         // Check the url if it is complete or accessible or not 
         console.log("Checking URL validity")
         try {
@@ -73,7 +75,14 @@ export class UrlMapperService{
         if(short_url==dupURL){
             console.log("Duped URl")
             while(short_url==dupURL){
-                short_url = this.generateShortURL(request.long_url,1,5)
+                // Randomly select 0-63 number 
+                // Calculate a random start index between 0 and 59 inclusive
+                // .floor round up the lowest number
+                const startingNumber = Math.floor(Math.random() * 60); 
+                // The end index is always exactly 5 steps ahead
+                const endingNuumber = startingNumber + 5;
+
+                short_url = this.generateShortURL(request.long_url,startingNumber,endingNuumber)
                 console.log("New Short URL")
                 console.log(short_url)
                 if(short_url!=dupURL){
@@ -138,6 +147,9 @@ export class UrlMapperService{
 
     }
 
+
+    // THis is not stagging and production ready. The params should be different 
+    // REFACTOR
     static generateShortURL(long_url: string, startingSlice: number = 5, endingSlice: number = 10) {
         // Shorten the url
         // Implement base62 encoding 
@@ -155,8 +167,9 @@ export class UrlMapperService{
         // Return the hash as string. use digest using base64 encoding
         // const short_url = (hasher.digest("base64")).slice(Math.random(),Math.random())
         console.log('Base_URl')
-        const base_url_short = ENV.BASE_URL_SHORTEN
-        console.log(base_url_short)
+        const base_url_short = ENV.BASE_URL_SHORTEN_DEVELOPMENT
+        // const base_url_short = ENV.BASE_URL_SHORTEN
+        console.info(base_url_short)
         // Use hex encoding. 
         // generated 64 characters
         const short_url = base_url_short + hasher.digest("hex").slice(startingSlice,endingSlice)
@@ -199,8 +212,11 @@ export class UrlMapperService{
 
     // }
 
+
+    // REFACTOR
     // URL Re-direct
     static async reDirect(shortenURL: string): Promise<URL_VALIDITY_STATUS> {
+        // Need to change 
         const completeShortURL = "http://localhost:3050/" + shortenURL
         const fetchLongURL = await URL_MAPPER_MODEL.find().where('short_url',completeShortURL).lean()
         let returnURL: string = ''

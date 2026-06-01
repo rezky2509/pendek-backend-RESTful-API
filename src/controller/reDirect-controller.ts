@@ -4,6 +4,8 @@ import { URL_VALIDITY_STATUS } from "./models/urlMapper-model";
 
 import type {Serve, ServerWebSocket} from 'bun'
 
+// REFACTOR
+
 export const reDirectURLController = new Hono()
 
     reDirectURLController.get(':shortURL',async(c)=>{
