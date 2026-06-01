@@ -217,8 +217,8 @@ export class UrlMapperService{
     // URL Re-direct
     static async reDirect(shortenURL: string): Promise<URL_VALIDITY_STATUS> {
         // Need to change 
-        const completeShortURL = "http://localhost:3050/" + shortenURL
-        const fetchLongURL = await URL_MAPPER_MODEL.find().where('short_url',completeShortURL).lean()
+        // const completeShortURL = "http://localhost:3050/" + shortenURL
+        const fetchLongURL = await URL_MAPPER_MODEL.find().where('short_url',shortenURL).lean()
         let returnURL: string = ''
         let previousCount: number = 0;
         let isURLActive: boolean = true
@@ -241,7 +241,7 @@ export class UrlMapperService{
             // Update total Clicks
                 await URL_MAPPER_MODEL.updateOne({
                     total_clicks: previousCount+1
-                }).where('short_url',completeShortURL)
+                }).where('short_url',shortenURL)
                 // publish and push to let there is someone clicking the link 
             return {success: true, shorten_url: returnURL}
         }
