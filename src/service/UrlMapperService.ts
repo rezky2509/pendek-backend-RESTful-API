@@ -1,5 +1,5 @@
 import { HTTPException } from "hono/http-exception";
-import { CreateURLRequest, CreateUrlResponse, dashboardOverviewResponse, dashboardOverviewHeader, toDashboardOverview, totalClicksMetadata, toURLResponse, UpdateUrl, GetListsURL, toGetURLLists, URL_VALIDITY_STATUS } from "../controller/models/urlMapper-model";
+import { CreateURLRequest, CreateUrlResponse, dashboardOverviewResponse, dashboardOverviewHeader, toDashboardOverview, totalClicksMetadata, toURLResponse, UpdateUrl, GetListsURL, toGetURLLists, URL_VALIDITY_STATUS, recentlyAddedSummary } from "../controller/models/urlMapper-model";
 import { User } from "../models/Users";
 import { UrlMapperValidation } from "../validation/UrlMapperValidation";
 import { Hono } from "hono";
@@ -181,40 +181,45 @@ export class UrlMapperService{
     }
 
     // Update Data
-    // static async updateURL(bodyRequest: UpdateUrl, user: User, urlID: string):Promise<CreateUrlResponse>{
-    //     console.log("Checking body")
-    //     // Body check
-    //     const validation = UrlMapperValidation.UPDATE.safeParse(bodyRequest)
-    //     let errorCollector: UrlMapperValidation [] = []
-    //     if(!validation.success){
-    //         console.log('Body is invalid')
-    //         validation.error.issues.forEach((error)=>{
-    //             errorCollector.push({
-    //                 path: error.path,
-    //                 message: error.message
-    //             })
-    //         })
-    //         throw new HTTPException(400,{
-    //             cause: errorCollector
-    //         })
-    //     }
+    static async updateURL(bodyRequest: UpdateUrl, user: User, urlID: string){
+        console.log("Checking Body Request")
+        console.log(bodyRequest)
+        // Body check
+        const validation = UrlMapperValidation.UPDATE.safeParse(bodyRequest)
+        console.log(validation.success)
+        let errorCollector: UrlMapperValidation [] = []
+        if(!validation.success){
+            console.log(validation.error.message)
+            validation.error.issues.forEach((error)=>{
+                errorCollector.push({
+                    path: error.path,
+                    message: error.message
+                })
+            })
+            throw new HTTPException(400,{
+                cause: errorCollector
+            })
+        }
 
-    //     // Check the url id 
-    //     const idValidation = await mongoose.Types.ObjectId.isValid(urlID)
-    //     if(!idValidation){
-    //         throw new HTTPException(400,{
-    //             cause: "The url ID is invalid"
-    //         })
-    //     }
-    //     else{
-            
-    //         // type mismatch
-    //         const responseDb = await URL_MAPPER_MODEL.updateOne(urlID,validation).exec()
-    //         return toURLResponse(responseDb)
-    //     }
+        console.log('Checking url id')
+        // Check the url id 
+        const idValidation = await mongoose.Types.ObjectId.isValid(urlID)
+        if(!idValidation){
+            console.error('URL id invalid')
+            throw new HTTPException(400,{
+                cause: "The url ID is invalid"
+            })
+        }
 
-
-    // }
+        console.log('Body Okay. Updating to Document')
+        const result = await URL_MAPPER_MODEL.findByIdAndUpdate(
+            {_id:urlID},
+            {...bodyRequest},
+            // This option return the update document
+            {new: true}
+        ).exec()
+        return result
+    }
 
 
     // REFACTOR

@@ -39,36 +39,14 @@ urlMapperController.get('/url_mapper/lists', async(c)=>{
 urlMapperController.patch('/url_mapper/:url_id', async(c)=>{
     console.log('UPDATING')
     const user = c.get('user') as User
-    // if the body is not exist or undefined 
-    // let body;
-    // try{
-    //     body = await c.req.json() 
-    //     const databaseResponse = await UrlMapperService.updateURL(body, user)
-    //     return c.json({
-    //         data: databaseResponse
-    //     })
-    // }catch(error){
-    //     throw new HTTPException(404,{
-    //         cause: 'Bad Request'
-    //     })
-    // }
-    // if(!body){
-    //     throw new HTTPException(400,{
-    //         cause: 'Bad Request'
-    //     })
-    // }else{
-    //     const databaseResponse = await UrlMapperService.updateURL(body, user)
-    //     return c.json({
-    //         data: databaseResponse
-    //     })
-    // }
     const body = await c.req.json()
     const params =  await c.req.param('url_id')
-    console.log(body)
-    // const databaseResponse = await UrlMapperService.updateURL(body,user,params)
-    // return c.json({
-    //     data: databaseResponse
-    // })
+    console.info(body)
+
+    const databaseResponse = await UrlMapperService.updateURL(body,user,params)
+    return c.json({
+        data: databaseResponse
+    })
 
 })
 
