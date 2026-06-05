@@ -13,8 +13,8 @@ import { toAddressResponse } from "../controller/models/address-model";
 export class UrlMapperService{
 
     // Staging or Production
-    // static BASE_URL = ENV.BASE_URL_SHORTEN
-    static BASE_URL = ENV.BASE_URL_SHORTEN_DEVELOPMENT
+    static BASE_URL = ENV.BASE_URL_SHORTEN
+    // static BASE_URL = ENV.BASE_URL_SHORTEN_DEVELOPMENT
 
     // REFACTOR
     // The response should be promise
@@ -171,7 +171,7 @@ export class UrlMapperService{
         // Return the hash as string. use digest using base64 encoding
         // const short_url = (hasher.digest("base64")).slice(Math.random(),Math.random())
         console.log('Base_URl')
-        const base_url_short = ENV.BASE_URL_SHORTEN_DEVELOPMENT
+        const base_url_short = this.BASE_URL
         // const base_url_short = ENV.BASE_URL_SHORTEN
         console.info(base_url_short)
         // Use hex encoding. 

@@ -65,8 +65,8 @@ export type totalClicksMetadata = {
 
 export type recentlyAddedSummary = {
     id: ObjectId,
-    shorten_url: string,
-    original_url: string,
+    short_url: string,
+    long_url: string,
     total_clicks: number,
     url_status: boolean,
     description: string
@@ -128,8 +128,8 @@ export function toRecentlyAddedLinks(recentlyAddedLinks: CreateUrlResponse[]): r
     // Loop through each array
     return recentlyAddedLinks.map((item) => ({
         id: item._id,
-        shorten_url: item.short_url,
-        original_url: item.long_url,
+        short_url: item.short_url,
+        long_url: item.long_url,
         total_clicks: item.total_clicks ?? 0,
         url_status: item.is_active,
         description: item.description ?? ''

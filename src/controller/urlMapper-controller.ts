@@ -60,6 +60,17 @@ urlMapperController.get("/url_mapper/dashboard/overview", async(c)=>{
     })
 })
 
+urlMapperController.delete('/url_mapper/:url_id',async(c)=>{
+    const url_id = await c.req.param('url_id')
+    console.log(`User ID ${url_id}`)
+
+    // Return as new response 
+    // https://hono.dev/docs/api/context
+    // since successful delete return empty body
+    // return empty context
+    return new Response(null, {status: 204})
+})
+
 // urlMapperController.get(':shortURL',async(c)=>{
 //     // fetch the url
 //     // console.log('Reading user shorten url')

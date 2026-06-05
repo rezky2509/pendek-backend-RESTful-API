@@ -75,6 +75,18 @@ Response body(success):
 }
 ```
 
+## DELETE Short URL 
+Endpoint: DELETE api/url_mapper/{url_id}
+
+Request Headers: 
+- Authorization: Token
+
+Response body (success):
+```json
+{
+    "data":true
+}
+
 ## GET Short URL List 
 Endpoint: GET /api/url_mapper/lists
 
