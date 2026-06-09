@@ -62,13 +62,25 @@ urlMapperController.get("/url_mapper/dashboard/overview", async(c)=>{
 
 urlMapperController.delete('/url_mapper/:url_id',async(c)=>{
     const url_id = await c.req.param('url_id')
-    console.log(`User ID ${url_id}`)
+    const user = c.get('user') as User
+    // console.log(`User ID ${url_id}`)
+
+    const result = await UrlMapperService.deleteURL(user,url_id)
 
     // Return as new response 
     // https://hono.dev/docs/api/context
     // since successful delete return empty body
     // return empty context
-    return new Response(null, {status: 204})
+    if(result === true){
+        return new Response(null, {status: 204})
+    }else{
+        return c.json({
+            data: {
+                'errors':'Internal server error. Please Try again later'
+            }
+        },500)
+    }
+
 })
 
 // urlMapperController.get(':shortURL',async(c)=>{

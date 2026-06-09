@@ -13,8 +13,8 @@ import { toAddressResponse } from "../controller/models/address-model";
 export class UrlMapperService{
 
     // Staging or Production
-    static BASE_URL = ENV.BASE_URL_SHORTEN
-    // static BASE_URL = ENV.BASE_URL_SHORTEN_DEVELOPMENT
+    // static BASE_URL = ENV.BASE_URL_SHORTEN
+    static BASE_URL = ENV.BASE_URL_SHORTEN_DEVELOPMENT
 
     // REFACTOR
     // The response should be promise
@@ -321,5 +321,14 @@ export class UrlMapperService{
 
 
         return toDashboardOverview(groupDashboard,getRecentlyAddedLinks)
+    }
+
+    static async deleteURL(user: User, urlID: string){
+        const result = await URL_MAPPER_MODEL.deleteOne({_id: urlID, user_id: user._id}).lean().exec()
+        if(result.acknowledged === true){
+            return true
+        }else {
+            return false
+        }
     }
 }
