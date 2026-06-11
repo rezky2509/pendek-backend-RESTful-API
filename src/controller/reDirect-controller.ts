@@ -12,6 +12,8 @@ export const reDirectURLController = new Hono()
         // fetch the url
         console.log('Reading user shorten url')
         const urlParam = await c.req.param()
+        const requesterRegion = c.req.header('cf-ipcountry') || 'UNKNOWN'
+        console.log('Requester region:', requesterRegion)
         // console.log(urlParam.shortURL)
         const redirectURL = await UrlMapperService.reDirect(urlParam.shortURL) as URL_VALIDITY_STATUS
 
