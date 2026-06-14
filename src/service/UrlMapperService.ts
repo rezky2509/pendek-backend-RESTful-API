@@ -10,11 +10,16 @@ import {ENV} from '../utils/env'
 import { toAddressResponse } from "../controller/models/address-model";
 
 
+type errorURLRegistration = {
+    message: string[] | string
+}
+
 export class UrlMapperService{
 
     // Staging or Production
     // static BASE_URL = ENV.BASE_URL_SHORTEN
     static BASE_URL = ENV.BASE_URL_SHORTEN_DEVELOPMENT
+
 
     // REFACTOR
     // The response should be promise
@@ -24,13 +29,16 @@ export class UrlMapperService{
         const validateRequest = UrlMapperValidation.CREATE.safeParse(request)
         console.log(request)
 
+        // Too complex if return in an array 
         let errorCollector: UrlMapperValidation[] = []
+        // let errorCollector: errorURLRegistration = {message: ''}
         if(validateRequest.error){
-            // Collect the field 
+            console.log(validateRequest)
+            // // Collect the field 
             validateRequest.error.issues.forEach((issue)=>{
                 // Collecting the error
                 errorCollector.push({
-                    error: issue.path,
+                    field: issue.path.toString(),
                     message: issue.message
                 })
             })
@@ -60,7 +68,7 @@ export class UrlMapperService{
                 }
             }
         } catch (error) {
-            throw new HTTPException(404,{
+            throw new HTTPException(400,{
                 cause: "The url provided is invalid or not found"
             })
         }
@@ -137,16 +145,9 @@ export class UrlMapperService{
             return mapResult
         }
         else{
-            // Using Flat map to filter possible empty array 
-            // flatMap automatically flattens those empty arrays, 
-            // leaving you with a clean, single-level array of only valid objects.
-            // https://www.youtube.com/watch?v=ERZW8qh3igo
-            return result.flatMap((urlList)=>{
-                const returnResponse = toURLResponse(urlList)
-                // The square bracket letting typescript know that return this single object only. 
-                // Since we had filter if the lenght of the array is only one
-                return returnResponse ? [returnResponse] : []
-            })
+            // Return mapped result for single or zero results
+            // loop every lists 
+            return result.map((urlList) => toGetURLLists(urlList))
         }
 
     }

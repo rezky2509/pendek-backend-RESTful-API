@@ -12,10 +12,12 @@ type DeleteResponse = {
 }
 
 type ErrorResponse = {
-    name?: string,
     password?: string,
-    username?: string
+    name?: string,
+    username?: string,
+    email?: string
 }
+
 
 export class userService{
     
@@ -43,6 +45,7 @@ export class userService{
                 // check if an array contains a specific value.
                 // the include check if the string contain the specific string 
                 // expect as the value and return as boolean
+                // ?? name for what ?
                 if(issue.path.includes('name')){
                     errorAccumulator.name = issue.message
                 }                
@@ -57,62 +60,88 @@ export class userService{
             // this is library of hono
             // this throw to the main index.ts as httpexception 
             console.log("data not meet requirement. ")
+            console.log(validateRequest)
             throw new HTTPException(400,{
-                cause: errorAccumulator
+                // seems wrong
+                message: JSON.stringify(errorAccumulator)
                 // error accumulator does not store directly the error. 
             })
         }
         console.log("Form Valid")
 
-        // IT HANG HERE
         // Check duplicate 
+        // Check duplicate both username and email
         // These using mongoose schema
         console.log("Checking username existance")
         let checkDuplicate = null
+        let checkDuplicateEmail = null
         try {
             // find will return an ARRAY of object
             // findOne will return an object
             // find Does Not Throw on No Match
             checkDuplicate = await UserModel.findOne({username: request.username})  
+            checkDuplicateEmail = await UserModel.findOne({email: request.email})
             console.log("Checked user.")
         } catch (error) {
             console.log("Duplicate found")
            console.warn(`${error}`)
         }
+        // what return 
+        console.info("Return from DB username")
         console.log(checkDuplicate)
+        console.info('Return from DB email')
+        console.log(checkDuplicateEmail)
 
+        let errorCollectorDuplicate: ErrorResponse = {}
+
+        // REFACTOR THIS 
+        // if(checkDuplicate){
+        //     console.warn("Username Taken.")
+        //     // if duplicate found, return HTTP Exception from HONO 
+        //     // it return an http response status 400
+        //     // second argument is message 
+        //     throw new HTTPException(400,{
+        //         message: "Username is taken"
+        //     })
+        // }
+        // if(checkDuplicateEmail){
+        //     throw new HTTPException(400,{
+        //         message:"Email is taken"
+        //     })
+        // }
         if(checkDuplicate){
-            console.warn("Username Taken.")
-            // if duplicate found, return HTTP Exception from HONO 
-            // it return an http response status 400
-            // second argument is message 
+            errorCollectorDuplicate.username = 'Username is taken'
+            if(checkDuplicateEmail){
+                errorCollectorDuplicate.email = 'Email is taken'
+            }
             throw new HTTPException(400,{
-                cause: "Username is taken"
+                cause: errorCollectorDuplicate
             })
         }
-            console.log('User not exist, proceed create')
-            // Hashing Password Bcrypt
-            // https://bun.com/guides/util/hash-a-password
-            // Need to instyal 
-            const bcrypt = await Bun.password.hash(request.password, {
-                algorithm: "bcrypt",
-                // cost is the complexity
-                // The higher the longer the time taken and it's expensive
-                cost: 10
-            })
 
-            // Store the hashed password into the request (mutate)
-            request.password = bcrypt
+        console.log('User not exist, proceed create')
+        // Hashing Password Bcrypt
+        // https://bun.com/guides/util/hash-a-password
+        // Need to instyal 
+        const bcrypt = await Bun.password.hash(request.password, {
+            algorithm: "bcrypt",
+            // cost is the complexity
+            // The higher the longer the time taken and it's expensive
+            cost: 10
+        })
 
-            // Store to Database
-            // With mongoose can create and store at once
-            console.log("Storing to DB")
-            const resultDB = await UserModel.create(request)
-            console.log("Data stored in DB")
+        // Store the hashed password into the request (mutate)
+        request.password = bcrypt
 
-            // Return Response 
-            // take the request as an argument with type userRequest
-            return toUserResponse(resultDB)
+        // Store to Database
+        // With mongoose can create and store at once
+        console.log("Storing to DB")
+        const resultDB = await UserModel.create(request)
+        console.log("Data stored in DB")
+
+        // Return Response 
+        // take the request as an argument with type userRequest
+        return toUserResponse(resultDB)
     }
 
 
@@ -127,7 +156,6 @@ export class userService{
                 message: "Invalid form input"
             })
         }
-
 
         // Checking at DB is the user exist 
         // use let so that we can assign or mutate the token property
@@ -146,6 +174,7 @@ export class userService{
             // third argument is the algorithm 
             const isPasswordValid = await Bun.password.verify(request.password,user.password,'bcrypt')      
             
+            // Need to refactor
             if(isPasswordValid){
                 // if valid
                 // Create Token 
@@ -166,7 +195,7 @@ export class userService{
                 // if invalid
                 console.log('password is not correct')
                 throw new HTTPException(401,{
-                    message: "Username or password is invalid"
+                    cause: "Username or password is invalid"
                 })
             }
         }else{
@@ -176,7 +205,7 @@ export class userService{
             // for login purpose
             console.log("User not exist")
             throw new HTTPException(401,{
-                message: "Username or password is invalid"
+                cause: "Username or password is invalid"
             })
         }
 
@@ -211,7 +240,7 @@ export class userService{
         if(validateToken.error){
             console.info('Token is empty')
             throw new HTTPException(401,{
-                cause:"Unauthorized Access (1)"
+                message:"Unauthorized Access (1)"
             })
         }
         // 1 means no token 
@@ -237,7 +266,7 @@ export class userService{
         if(!user){
             console.info('Token is invalid')
             throw new HTTPException(401,{
-                cause:"Unauthorized Access (2)"
+                message:"Unauthorized Access (2)"
             })
         }
 
