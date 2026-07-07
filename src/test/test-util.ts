@@ -1,7 +1,10 @@
 import AddressModel, { Address } from "../models/Adresses";
 import ContactModel, { Contact } from "../models/Contacts";
+import URL_MAPPER_MODEL from "../models/UrlMappers";
 import UserModel, { User } from "../models/Users";
 import { ObjectId } from "mongodb";
+
+import app from '../index'
 
 export class UserTest {
     // These unit test class DIRECTLY insert to DB
@@ -55,7 +58,7 @@ export class UserTest {
     static async getID():Promise<ObjectId>{
         const contactDetail = await UserModel.findOne({username:'test'}) as User
         console.log(contactDetail)
-        const id = contactDetail._id 
+        const id = contactDetail._id as ObjectId
         return id
     }
     
@@ -113,8 +116,8 @@ export class ContactTest{
 
     static async createMany(n: number){
         console.log(`Creating contact with amount of ${n}`)
-        for(let i: number = 0; i<n; n++){
-            this.create()
+        for(let i: number = 0; i<n; i++){
+            await this.create()
         }
     }
 }
@@ -171,5 +174,68 @@ export class AddressTest {
         }catch(error){
             throw error
         }
+    }
+}
+
+export class UrlMapperTest{
+    static async addURL(){
+        console.log('Inserting URL...')
+        // Should just directly use the API call not directly insert 
+        // await URL_MAPPER_MODEL.insertOne({
+        //     user_id: await UserTest.getID(),
+        //     long_url: 'https://www.google.com',
+        //     description: 'LALALALA',
+        //     is_active: true
+        // })
+        await app.request('/api/url_mapper',{
+            method:'POST',
+            headers:{
+                'Authorization':'test'
+            },
+            body:JSON.stringify({
+                long_url: 'https://www.google.com',
+                description: 'LALALALA',
+                is_active: true
+            })
+        })
+        console.log('Insert Success')
+    }
+
+    static async createMany(n: number){
+        console.log('Inserting Many')
+        for(let a:number = 1; a<n; a++){
+            // Need await since it's return as promise
+            await this.addURL();
+        }
+    }
+
+    static async deletOne(){
+        console.log('Deleting ONE ')
+        await URL_MAPPER_MODEL.deleteOne({
+            user_id: await UserTest.getID() as ObjectId
+        })
+        console.log('Delete success')
+    }
+
+    static async getOneUrlId():Promise<ObjectId>{
+        console.log('Getting URL ID')
+        const result = await URL_MAPPER_MODEL.findOne(
+            {
+                user_id: await UserTest.getID() as ObjectId
+            },
+            {
+                _id: 1
+            }
+        ).exec()
+        console.log(result)
+        return result?._id!
+    }
+
+    static async deleteAllURL(){
+        console.log('Deleting....')
+        await URL_MAPPER_MODEL.deleteMany({
+            user_id: await UserTest.getID() as ObjectId
+        })
+        console.log('Deleted success')
     }
 }

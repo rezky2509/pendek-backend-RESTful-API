@@ -326,7 +326,7 @@ export class userService{
 
     // Following the API spec, for logout, 
     // the payload will return boolean value
-    static async logout(user: User): Promise<boolean> {
+    static async logout(user: User, sentToken: string): Promise<boolean> {
         // Remove the token to logout
         // ensure the token validity is not avalaible 
         console.log("Removing user token")

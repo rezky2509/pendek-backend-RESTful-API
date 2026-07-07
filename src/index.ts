@@ -104,5 +104,8 @@ export default {
   port: 3050,
   fetch: app.fetch,
   websocket,
+  // Tell Hono that the request field is a hono request method
+  // This is for Unit Testing 
+  request: app.request
 // Default Port number is 3000
 }

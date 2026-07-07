@@ -85,6 +85,13 @@ export type dashboardOverviewResponse = {
     recently_added_links: recentlyAddedSummary[]
 }
 
+export type urlMapperPaginate = {
+    page: number,
+    size: number, 
+    total_pages: number,
+    data: CreateUrlResponse | CreateUrlResponse[]
+}
+
 // Discriminated Union For active or inactve links 
 export type URL_VALIDITY_STATUS = 
     | {success: true; shorten_url: string}

@@ -6,7 +6,11 @@ Endpoint: POST api/url_mapper
 Request Headers: 
 - Authorization: token
 
+
+At the moment, can only receive one request url body per request. 
+Soon receive as an array of object 
 Request body: 
+The long_url should add https://
 ```json 
 {
     "long_url": "www.bfddbf.com/412412",
@@ -142,6 +146,47 @@ Can return multiple url in an array
 ```
 
 Pagination features coming soon for url lists
+
+## Pagination by Page
+Endpoint: GET /api/url_mapper?page={number}
+Require Params: page
+
+Request Headers:
+- Authorization: token
+
+Query parameter 
+- Required
+
+Response body (success) 
+```json
+{
+    "data":[
+        {
+            "_id":"21412421412",
+            "user": "21412",
+            "long_url": "www.bfddbf.com/412412",
+            "short_url":"wwww.pendek.com/g342g2",
+            "total_clicks":23231,
+            "created_at": "12 Jan 2025",
+            "description": "here is the description",
+            "is_active": true
+        },
+        {
+            "_id":"21412421412",
+            "user": "21412",
+            "long_url": "www.bfddbf.com/412412",
+            "short_url":"wwww.pendek.com/g342g2",
+            "total_clicks":23231,
+            "created_at": "12 Jan 2025",
+            "description": "here is the description",
+            "is_active": true
+        }
+    ],
+    "page":"1",
+    "size":"10",
+    "total_pages":"10"
+}
+```
 
 ## Remove Short URL 
 Endpoint: DELETE /api/url_mapper/{url_id}

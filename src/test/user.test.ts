@@ -18,7 +18,7 @@ import { logger } from '../application/logging';
 import { UserTest } from './test-util';
 import  mongoose  from 'mongoose';
 
-import figlet = require('figlet');
+// import figlet = require('figlet');
 
 // Check any logs from mongoose 
 // mongoose.set('debug',true)

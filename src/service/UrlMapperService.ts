@@ -1,5 +1,5 @@
 import { HTTPException } from "hono/http-exception";
-import { CreateURLRequest, CreateUrlResponse, dashboardOverviewResponse, dashboardOverviewHeader, toDashboardOverview, totalClicksMetadata, toURLResponse, UpdateUrl, GetListsURL, toGetURLLists, URL_VALIDITY_STATUS, recentlyAddedSummary } from "../controller/models/urlMapper-model";
+import { CreateURLRequest, CreateUrlResponse, dashboardOverviewResponse, dashboardOverviewHeader, toDashboardOverview, totalClicksMetadata, toURLResponse, UpdateUrl, GetListsURL, toGetURLLists, URL_VALIDITY_STATUS, recentlyAddedSummary, urlMapperPaginate } from "../controller/models/urlMapper-model";
 import { User } from "../models/Users";
 import { UrlMapperValidation } from "../validation/UrlMapperValidation";
 import { Hono } from "hono";
@@ -53,10 +53,13 @@ export class UrlMapperService{
 
         // This one ok
         // Check the url if it is complete or accessible or not 
+        // Seems not running 
+        // When the url is not valid
         console.log("Checking URL validity")
         try {
             // Check if user inserted the complete url 
             if(request.long_url.includes("https://",0)){
+                console.log('Checking URL status')
                 const checkUrl = await fetch(request.long_url)
                 if(checkUrl.ok){
                     console.log('URL reached')
@@ -124,7 +127,9 @@ export class UrlMapperService{
         const result = await URL_MAPPER_MODEL.find({
             user_id: user._id
             // using the select ('') field name and minus sign to exclude the field 
-        }).select('-user_id').lean({_id: true}).sort('created_at')
+            // sort created at 1 means ascending means from the oldest to newest
+            // sort -1 means descending from newest to oldest
+        }).select('-user_id').lean({_id: true}).sort({created_at: -1})
 
         // using the select to filter only necessary field, type space
         // const result = await URL_MAPPER_MODEL.find().select('_id long_url')
@@ -141,7 +146,7 @@ export class UrlMapperService{
             result.map((result: GetListsURL)=>{
                 mapResult.push(toGetURLLists(result))
             })
-            console.log(mapResult)
+            // console.log(mapResult)
             return mapResult
         }
         else{
@@ -220,6 +225,46 @@ export class UrlMapperService{
             {new: true}
         ).exec()
         return result
+    }
+
+    static async paginateSearch(page:number, user: User): Promise<urlMapperPaginate>{
+    // * PAGINATION LOGIC EXPLANATION
+    // * 
+    // * Formula: skip((page - 1) * limit)
+    // * 
+    // * Why (page - 1)?
+    // * - Users think in 1-indexed pages: Page 1, Page 2, Page 3, etc.
+    // * - MongoDB skip() works with 0-indexed offsets: skip(0), skip(10), skip(20), etc.
+    // * - We subtract 1 to convert user's page number to database's skip offset
+    // * 
+    // * Example with limit = 10 and 30 total documents:
+    // * 
+    // * Page 1: (1-1) * 10 = 0   → skip(0)  → Returns Doc 1-10 ✅
+    // * Page 2: (2-1) * 10 = 10  → skip(10) → Returns Doc 11-20 ✅
+    // * Page 3: (3-1) * 10 = 20  → skip(20) → Returns Doc 21-30 ✅
+    // * Page 4: (4-1) * 10 = 30  → skip(30) → Returns [] (no more data) ✅
+    // * 
+    // * Without (page - 1), page 1 would return Doc 11-20 instead of Doc 1-10! ❌
+
+    // so, skip currentPage-1 is 
+    // If we want to go to the current page, let say page 1, 
+    // we (1-1)*10 is zero 
+    // Skip(0) means that, it return only from the index of row document starting from zero 
+    // than limit is limit the document result to 10. 
+    // So what does skip means is the starting value of the search. 
+
+    // Set by default, every response should be 10 List of URL
+    const result = await URL_MAPPER_MODEL.find({user_id: user._id}).skip((page-1)*10).limit(10).sort({created_at: -1});
+    const totalDocument = await URL_MAPPER_MODEL.countDocuments({user_id: user._id});
+
+        return {
+            // Need to destructure as an array return 
+            data: result.map((urlData)=>toURLResponse(urlData)),
+            page: page,
+            size: totalDocument,
+            // Logic to calculate total pages 
+            total_pages: Math.ceil(totalDocument/10)
+        }
     }
 
 

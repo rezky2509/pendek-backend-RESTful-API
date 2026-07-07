@@ -2,9 +2,11 @@
   "name": "bun-hono-restful",
   "scripts": {
     "dev": "bun run --hot src/index.ts",
-    "migration": "bun run ./src/database/migration.ts"
+    "migration": "bun run ./src/database/migration.ts",
+    "faker":"bun ./src/test/faker/faker.ts"
   },
   "dependencies": {
+    "@faker-js/faker": "^10.5.0",
     "bcrypt": "^6.0.0",
     "bm2": "^1.0.39",
     "figlet": "^1.10.0",

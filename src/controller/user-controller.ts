@@ -8,6 +8,7 @@ import { bearerAuth } from 'hono/bearer-auth'
 import { toUserResponse, User } from "../models/Users";
 import { authMidleware } from "../middleware/auth-middleware";
 import limiter from "./limiter";
+import { HTTPException } from "hono/http-exception";
 // Best practice to instantiatee object
 // Dont create class for controller <-- best practice for hono
 // always use hono 
@@ -107,8 +108,15 @@ userController.patch('users/current', async(c)=>{
 // Logout Request 
 userController.delete('users/current', async(c)=>{
     const user = c.get('user') as User
-
-    const response = await userService.logout(user)
+    const sentToken = c.req.header('Authorization')
+    console.log(`User Token before sending to service ${sentToken}`)
+    if(!sentToken){
+        throw new HTTPException(400,{
+            message:'Token is not exist on header'
+        })
+    }
+    const response = await userService.logout(user,sentToken)
+    console.log(response)
 
     return c.json({
         payload: response
